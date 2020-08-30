@@ -55,8 +55,8 @@ using namespace boost::program_options;
 #if PLATFORM == TC_PLATFORM_WINDOWS
 #include "ServiceWin32.h"
 char serviceName[] = "bnetserver";
-char serviceLongName[] = "LegionCore bnet service";
-char serviceDescription[] = "LegionCore Battle.net emulator authentication service";
+char serviceLongName[] = "TrinityCore bnet service";
+char serviceDescription[] = "TrinityCore Battle.net emulator authentication service";
 /*
 * -1 - not in service mode
 *  0 - stopped

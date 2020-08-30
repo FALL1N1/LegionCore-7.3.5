@@ -75,14 +75,14 @@ BEGIN
     BEGIN
         BLOCK "080004b0"
         BEGIN
-            VALUE "CompanyName",        "LegionCore"
-            VALUE "FileDescription",    "LegionCore World Server Daemon"
+            VALUE "CompanyName",        "TrinityCore"
+            VALUE "FileDescription",    "TrinityCore World Server Daemon"
             VALUE "FileVersion",        "1.0.0.0"
             VALUE "InternalName",       "worldserver"
-            VALUE "LegalCopyright",     "(c)2020 LegionCore"
+            VALUE "LegalCopyright",     "(c)2020 TrinityCore"
             VALUE "OriginalFilename",   "worldserver.exe"
-            VALUE "ProductName",        "LegionCore World Server"
-            VALUE "ProductVersion",     "LegionCore"
+            VALUE "ProductName",        "TrinityCore World Server"
+            VALUE "ProductVersion",     "TrinityCore"
         END
     END
 

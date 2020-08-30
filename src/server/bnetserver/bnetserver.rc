@@ -75,14 +75,14 @@ BEGIN
     BEGIN
         BLOCK "080004b0"
         BEGIN
-            VALUE "CompanyName",        "LegionCore"
-            VALUE "FileDescription",    "LegionCore Battle.net Server Daemon"
+            VALUE "CompanyName",        "TrinityCore"
+            VALUE "FileDescription",    "TrinityCore Battle.net Server Daemon"
             VALUE "FileVersion",        "1.0.0.0"
             VALUE "InternalName",       "bnetserver"
-            VALUE "LegalCopyright",     "(c)2020 LegionCore"
+            VALUE "LegalCopyright",     "(c)2020 TrinityCore"
             VALUE "OriginalFilename",   "bnetserver.exe"
-            VALUE "ProductName",        "LegionCore Battle.net Server"
-            VALUE "ProductVersion",     "LegionCore"
+            VALUE "ProductName",        "TrinityCore Battle.net Server"
+            VALUE "ProductVersion",     "TrinityCore"
         END
     END
 

@@ -18,7 +18,8 @@ namespace {
         {
             if (firstLogin)
             {
-                ChatHandler(player->GetSession()).SendSysMessage("|cffFF0000LegionCore |r");
+                // no, thank you
+                //ChatHandler(player->GetSession()).SendSysMessage("|cffFF0000LegionCore |r");
             }
         }
     };
