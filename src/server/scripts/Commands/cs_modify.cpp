@@ -1021,9 +1021,9 @@ public:
         }
         else
         {
-            handler->PSendSysMessage(LANG_YOU_GIVE_MONEY, uint32(addmoney), handler->GetNameLink(target).c_str());
+            handler->PSendSysMessage(LANG_YOU_GIVE_MONEY, uint64(addmoney), handler->GetNameLink(target).c_str());
             if (handler->needReportToTarget(target))
-                (ChatHandler(target)).PSendSysMessage(LANG_YOURS_MONEY_GIVEN, handler->GetNameLink().c_str(), uint32(addmoney));
+                (ChatHandler(target)).PSendSysMessage(LANG_YOURS_MONEY_GIVEN, handler->GetNameLink().c_str(), uint64(addmoney));
 
             if (addmoney >=MAX_MONEY_AMOUNT)
                 target->SetMoney(MAX_MONEY_AMOUNT);
@@ -1031,7 +1031,7 @@ public:
                 target->ModifyMoney(int64(addmoney));
         }
 
-        TC_LOG_DEBUG(LOG_FILTER_GENERAL, handler->GetTrinityString(LANG_NEW_MONEY), moneyuser, uint32(addmoney), target->GetMoney());
+        TC_LOG_DEBUG(LOG_FILTER_GENERAL, handler->GetTrinityString(LANG_NEW_MONEY), moneyuser, uint64(addmoney), target->GetMoney());
         return true;
     }
 
