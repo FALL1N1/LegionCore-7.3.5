@@ -2975,3 +2975,17 @@ QuestPOI.DisableErrors = 1
 #
 ###################################################################################################
 
+###################################################################################################
+# Chat Logger
+
+ChatLogs.Channel = 1
+ChatLogs.Whisper = 1
+ChatLogs.SysChan = 1
+ChatLogs.Party = 1
+ChatLogs.Raid = 1
+ChatLogs.Guild = 1
+ChatLogs.Public = 1
+ChatLogs.Addon = 1
+ChatLogs.Battleground = 1
+# Outputs all of the enabled above loggers to the worldserver's console
+ChatLogs.Console = 1 

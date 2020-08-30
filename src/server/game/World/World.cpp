@@ -1319,6 +1319,7 @@ void World::LoadConfigSettings(bool reload)
     m_bool_configs[CONFIG_CHATLOG_PUBLIC] = sConfigMgr->GetBoolDefault("ChatLogs.Public", false);
     m_bool_configs[CONFIG_CHATLOG_ADDON] = sConfigMgr->GetBoolDefault("ChatLogs.Addon", false);
     m_bool_configs[CONFIG_CHATLOG_BGROUND] = sConfigMgr->GetBoolDefault("ChatLogs.Battleground", false);
+    m_bool_configs[CONFIG_CHATLOG_CONSOLE] = sConfigMgr->GetBoolDefault("ChatLogs.Console", true);
 
     // New anticheat
     m_int_configs[CONFIG_NEW_ANTICHEAT_MODE] = sConfigMgr->GetIntDefault("ServerAnticheat.Mode", 0);
