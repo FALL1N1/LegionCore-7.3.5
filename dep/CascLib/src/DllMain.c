@@ -1,27 +1,24 @@
 /*****************************************************************************/
-/* Directory.h                            Copyright (c) Ladislav Zezula 2015 */
+/* DllMain.c                              Copyright (c) Ladislav Zezula 2015 */
 /*---------------------------------------------------------------------------*/
-/* Directory functions for CascLib                                           */
+/* Description: DllMain for the CascLib.dll library                          */
 /*---------------------------------------------------------------------------*/
 /*   Date    Ver   Who  Comment                                              */
 /* --------  ----  ---  -------                                              */
-/* 30.10.15  1.00  Lad  The first version of Directory.h                     */
+/* 26.10.15  1.00  Lad  The first version of DllMain.c                       */
 /*****************************************************************************/
 
-#ifndef __DIRECTORY_H__
-#define __DIRECTORY_H__
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 
 //-----------------------------------------------------------------------------
-// Scanning a directory
+// DllMain
 
-bool DirectoryExists(LPCTSTR szDirectory);
+BOOL WINAPI DllMain(HINSTANCE hInst, DWORD dwReason, LPVOID lpReserved)
+{
+    UNREFERENCED_PARAMETER(hInst);
+    UNREFERENCED_PARAMETER(dwReason);
+    UNREFERENCED_PARAMETER(lpReserved);
 
-bool MakeDirectory(LPCTSTR szDirectory);
-
-int ScanIndexDirectory(
-    LPCTSTR szIndexPath,
-    INDEX_FILE_FOUND pfnOnFileFound,
-    void * pvContext
-    );
-
-#endif // __DIRECTORY_H__
+    return TRUE;
+}
