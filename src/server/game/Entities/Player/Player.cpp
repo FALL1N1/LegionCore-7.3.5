@@ -21666,16 +21666,18 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     m_name = fields[f_name].GetString();
 
     // check name limitations
-    if (sCharacterDataStore->CheckPlayerName(m_name, GetSession()->GetSessionDbcLocale()) != CHAR_NAME_SUCCESS || (AccountMgr::IsPlayerAccount(GetSession()->GetSecurity()) && sCharacterDataStore->IsReservedName(m_name)))
-    {
-        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ADD_AT_LOGIN_FLAG);
+    if (AccountMgr::IsPlayerAccount(GetSession()->GetSecurity())) {
+        if (sCharacterDataStore->CheckPlayerName(m_name, GetSession()->GetSessionDbcLocale()) != CHAR_NAME_SUCCESS || sCharacterDataStore->IsReservedName(m_name))
+        {
+            PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ADD_AT_LOGIN_FLAG);
 
-        stmt->setUInt16(0, uint16(AT_LOGIN_RENAME));
-        stmt->setUInt64(1, guid.GetCounter());
+            stmt->setUInt16(0, uint16(AT_LOGIN_RENAME));
+            stmt->setUInt64(1, guid.GetCounter());
 
-        CharacterDatabase.Execute(stmt);
+            CharacterDatabase.Execute(stmt);
 
-        return false;
+            return false;
+        }
     }
 
     // overwrite possible wrong/corrupted guid

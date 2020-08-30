@@ -235,7 +235,7 @@ void WorldSession::HandleCharCreateOpcode(WorldPackets::Character::CreateChar& c
     }
 
     // prevent character creating with invalid name
-    if (!normalizePlayerName(charCreate.CreateInfo->Name))
+    if (!normalizePlayerName(charCreate.CreateInfo->Name) && AccountMgr::IsPlayerAccount(GetSecurity()))
     {
         SendCharCreate(CHAR_NAME_NO_NAME);
         TC_LOG_ERROR(LOG_FILTER_NETWORKIO, "Account:[%d] but tried to Create character with empty [name] ", GetAccountId());
@@ -1016,7 +1016,7 @@ void WorldSession::HandleSetFactionInactive(WorldPackets::Character::SetFactionI
 
 void WorldSession::HandleCharacterRenameRequest(WorldPackets::Character::CharacterRenameRequest& packet)
 {
-    if (!normalizePlayerName(packet.RenameInfo->NewName))
+    if (!normalizePlayerName(packet.RenameInfo->NewName) && AccountMgr::IsPlayerAccount(GetSecurity()))
     {
         WorldPackets::Character::CharacterRenameResult result;
         result.Result = CHAR_NAME_NO_NAME;
@@ -1047,7 +1047,7 @@ void WorldSession::HandleCharacterRenameRequest(WorldPackets::Character::Charact
     const CharacterInfo* nameData = sWorld->GetCharacterInfo(packet.RenameInfo->Guid);
     const CharacterInfo* newNameData = sWorld->GetCharacterInfo(packet.RenameInfo->NewName);
 
-    if (newNameData || !nameData)
+    if ((newNameData || !nameData) && AccountMgr::IsPlayerAccount(GetSecurity()))
     {
         WorldPackets::Character::CharacterRenameResult result;
         result.Result = CHAR_NAME_NO_NAME;
@@ -1094,7 +1094,7 @@ void WorldSession::HandleCharacterRenameRequest(WorldPackets::Character::Charact
 
 void WorldSession::HandleSetPlayerDeclinedNames(WorldPackets::Character::SetPlayerDeclinedNames& packet)
 {
-    if (!sWorld->getBoolConfig(CONFIG_DECLINED_NAMES_USED))
+    if (!sWorld->getBoolConfig(CONFIG_DECLINED_NAMES_USED) && AccountMgr::IsPlayerAccount(GetSecurity()))
     {
         SendSetPlayerDeclinedNamesResult(DECLINED_NAMES_RESULT_SUCCESS, packet.Player);
         return;
@@ -1108,7 +1108,7 @@ void WorldSession::HandleSetPlayerDeclinedNames(WorldPackets::Character::SetPlay
     }
 
     std::wstring wname;
-    if (!Utf8toWStr(name, wname) || !isCyrillicCharacter(wname[0]))
+    if ((!Utf8toWStr(name, wname) || !isCyrillicCharacter(wname[0])) && AccountMgr::IsPlayerAccount(GetSecurity()))
     {
         SendSetPlayerDeclinedNamesResult(DECLINED_NAMES_RESULT_ERROR, packet.Player);
         return;
@@ -1121,7 +1121,7 @@ void WorldSession::HandleSetPlayerDeclinedNames(WorldPackets::Character::SetPlay
     }
 
     for (auto& i : packet.DeclinedNames.name)
-        if (!normalizePlayerName(i))
+        if (!normalizePlayerName(i) && AccountMgr::IsPlayerAccount(GetSecurity()))
         {
             SendSetPlayerDeclinedNamesResult(DECLINED_NAMES_RESULT_ERROR, packet.Player);
             return;
@@ -1282,14 +1282,14 @@ void WorldSession::HandleCharCustomizeCallback(std::shared_ptr<WorldPackets::Cha
 
     atLoginFlags &= ~AT_LOGIN_CUSTOMIZE;
 
-    if (!normalizePlayerName(customizeInfo->CharName))
+    if (!normalizePlayerName(customizeInfo->CharName) && AccountMgr::IsPlayerAccount(GetSecurity()))
     {
         SendCharCustomize(CHAR_NAME_NO_NAME, customizeInfo.get());
         return;
     }
 
     ResponseCodes res = sCharacterDataStore->CheckPlayerName(customizeInfo->CharName, GetSessionDbcLocale(), true);
-    if (res != CHAR_NAME_SUCCESS)
+    if (res != CHAR_NAME_SUCCESS && AccountMgr::IsPlayerAccount(GetSecurity()))
     {
         SendCharCustomize(res, customizeInfo.get());
         return;
@@ -1434,7 +1434,7 @@ void WorldSession::HandleCharRaceOrFactionChange(WorldPackets::Character::CharRa
         }
 
     // prevent character rename to invalid name
-    if (!normalizePlayerName(info->Name))
+    if (!normalizePlayerName(info->Name) && AccountMgr::IsPlayerAccount(GetSecurity()))
     {
         SendCharFactionChange(CHAR_NAME_NO_NAME, info);
         return;
