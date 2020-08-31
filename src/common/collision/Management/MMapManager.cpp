@@ -41,13 +41,13 @@ namespace MMAP
 
     void MMapManager::InitializeThreadUnsafe(std::unordered_map<uint32, std::vector<uint32>> const& mapData)
     {
-        // childMapData = mapData;
+        childMapData = mapData;
         // the caller must pass the list of all mapIds that will be used in the VMapManager2 lifetime
         for (std::pair<uint32 const, std::vector<uint32>> const& mapId : mapData)
         {
             loadedMMaps.insert(MMapDataSet::value_type(mapId.first, nullptr));
-            // for (uint32 childMapId : mapId.second)
-                // parentMapData[childMapId] = mapId.first;
+            for (uint32 childMapId : mapId.second)
+                parentMapData[childMapId] = mapId.first;
         }
 
         thread_safe_environment = false;
@@ -127,11 +127,11 @@ namespace MMAP
             return false;
 
         bool success = true;
-        // auto childMaps = childMapData.find(mapId);
-        // if (childMaps != childMapData.end())
-            // for (uint32 childMapId : childMaps->second)
-                // if (!loadMapImpl(basePath, childMapId, x, y))
-                    // success = false;
+        auto childMaps = childMapData.find(mapId);
+        if (childMaps != childMapData.end())
+            for (uint32 childMapId : childMaps->second)
+                if (!loadMapImpl(basePath, childMapId, x, y))
+                    success = false;
 
         return success;
     }
@@ -155,15 +155,15 @@ namespace MMAP
         // load this tile :: mmaps/MMMMXXYY.mmtile
         std::string fileName = Trinity::StringFormat(TILE_FILE_NAME_FORMAT, basePath.c_str(), mapId, x, y);
         FILE* file = fopen(fileName.c_str(), "rb");
-        // if (!file)
-        // {
-            // auto parentMapItr = parentMapData.find(mapId);
-            // if (parentMapItr != parentMapData.end())
-            // {
-                // fileName = Trinity::StringFormat(TILE_FILE_NAME_FORMAT, basePath.c_str(), parentMapItr->second, x, y);
-                // file = fopen(fileName.c_str(), "rb");
-            // }
-        // }
+        if (!file)
+        {
+            auto parentMapItr = parentMapData.find(mapId);
+            if (parentMapItr != parentMapData.end())
+            {
+                fileName = Trinity::StringFormat(TILE_FILE_NAME_FORMAT, basePath.c_str(), parentMapItr->second, x, y);
+                file = fopen(fileName.c_str(), "rb");
+            }
+        }
 
         if (!file)
         {
@@ -242,11 +242,11 @@ namespace MMAP
             return false;
 
         bool success = true;
-        // auto childMaps = childMapData.find(mapId);
-        // if (childMaps != childMapData.end())
-            // for (uint32 childMapId : childMaps->second)
-                // if (!loadMapInstanceImpl(basePath, childMapId, instanceId))
-                    // success = false;
+        auto childMaps = childMapData.find(mapId);
+        if (childMaps != childMapData.end())
+            for (uint32 childMapId : childMaps->second)
+                if (!loadMapInstanceImpl(basePath, childMapId, instanceId))
+                    success = false;
 
         return success;
     }
@@ -277,10 +277,10 @@ namespace MMAP
 
     bool MMapManager::unloadMap(uint32 mapId, int32 x, int32 y)
     {
-        // auto childMaps = childMapData.find(mapId);
-        // if (childMaps != childMapData.end())
-            // for (uint32 childMapId : childMaps->second)
-                // unloadMapImpl(childMapId, x, y);
+        auto childMaps = childMapData.find(mapId);
+        if (childMaps != childMapData.end())
+            for (uint32 childMapId : childMaps->second)
+                unloadMapImpl(childMapId, x, y);
 
         return unloadMapImpl(mapId, x, y);
     }
@@ -331,10 +331,10 @@ namespace MMAP
 
     bool MMapManager::unloadMap(uint32 mapId)
     {
-        // auto childMaps = childMapData.find(mapId);
-        // if (childMaps != childMapData.end())
-            // for (uint32 childMapId : childMaps->second)
-                // unloadMapImpl(childMapId);
+        auto childMaps = childMapData.find(mapId);
+        if (childMaps != childMapData.end())
+            for (uint32 childMapId : childMaps->second)
+                unloadMapImpl(childMapId);
 
         return unloadMapImpl(mapId);
     }

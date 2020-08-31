@@ -64,12 +64,12 @@ namespace VMAP
     void VMapManager2::InitializeThreadUnsafe(std::unordered_map<uint32, std::vector<uint32>> const& mapData)
     {
         // the caller must pass the list of all mapIds that will be used in the VMapManager2 lifetime
-        // iChildMapData = mapData;
+        iChildMapData = mapData;
         for (std::pair<uint32 const, std::vector<uint32>> const& mapId : mapData)
         {
             iInstanceMapTrees.insert(InstanceTreeMap::value_type(mapId.first, nullptr));
-            // for (uint32 childMapId : mapId.second)
-                // iParentMapData[childMapId] = mapId.first;
+            for (uint32 childMapId : mapId.second)
+                iParentMapData[childMapId] = mapId.first;
         }
 
         thread_safe_environment = false;
@@ -104,11 +104,11 @@ namespace VMAP
             if (loadSingleMap(mapId, basePath, x, y))
             {
                 result = VMAP_LOAD_RESULT_OK;
-                // auto childMaps = iChildMapData.find(mapId);
-                // if (childMaps != iChildMapData.end())
-                    // for (uint32 childMapId : childMaps->second)
-                        // if (!loadSingleMap(childMapId, basePath, x, y))
-                            // result = VMAP_LOAD_RESULT_ERROR;
+                auto childMaps = iChildMapData.find(mapId);
+                if (childMaps != iChildMapData.end())
+                    for (uint32 childMapId : childMaps->second)
+                        if (!loadSingleMap(childMapId, basePath, x, y))
+                            result = VMAP_LOAD_RESULT_ERROR;
             }
             else
                 result = VMAP_LOAD_RESULT_ERROR;
@@ -147,10 +147,10 @@ namespace VMAP
 
     void VMapManager2::unloadMap(unsigned int mapId, int x, int y)
     {
-        // auto childMaps = iChildMapData.find(mapId);
-        // if (childMaps != iChildMapData.end())
-            // for (uint32 childMapId : childMaps->second)
-                // unloadSingleMap(childMapId, x, y);
+        auto childMaps = iChildMapData.find(mapId);
+        if (childMaps != iChildMapData.end())
+            for (uint32 childMapId : childMaps->second)
+                unloadSingleMap(childMapId, x, y);
 
         unloadSingleMap(mapId, x, y);
     }
@@ -171,10 +171,10 @@ namespace VMAP
 
     void VMapManager2::unloadMap(unsigned int mapId)
     {
-        // auto childMaps = iChildMapData.find(mapId);
-        // if (childMaps != iChildMapData.end())
-            // for (uint32 childMapId : childMaps->second)
-                // unloadSingleMap(childMapId);
+        auto childMaps = iChildMapData.find(mapId);
+        if (childMaps != iChildMapData.end())
+            for (uint32 childMapId : childMaps->second)
+                unloadSingleMap(childMapId);
 
         unloadSingleMap(mapId);
     }
@@ -362,9 +362,9 @@ namespace VMAP
 
     int32 VMapManager2::getParentMapId(uint32 mapId) const
     {
-        // auto itr = iParentMapData.find(mapId);
-        // if (itr != iParentMapData.end())
-            // return int32(itr->second);
+        auto itr = iParentMapData.find(mapId);
+        if (itr != iParentMapData.end())
+            return int32(itr->second);
 
         return -1;
     }
