@@ -3388,14 +3388,44 @@ bool Map::getObjectHitPos(std::set<uint32> const& phases, float x1, float y1, fl
 
 float Map::GetHeight(std::set<uint32> const& phases, float x, float y, float z, bool vmap /*= true*/, float maxSearchDist /*= DEFAULT_HEIGHT_SEARCH*/, DynamicTreeCallback* dCallback /*= nullptr*/) const
 {
-    if (!this)
-        return VMAP_INVALID_HEIGHT_VALUE;
-    float vmapZ = GetHeight(x, y, z, vmap, maxSearchDist);
-    float goZ = _dynamicTree.getHeight(x, y, z, maxSearchDist, phases, dCallback);
-    if (vmapZ > goZ && dCallback)
-        dCallback->go = nullptr;
+    // find raw .map surface under Z coordinates
+    float mapHeight = VMAP_INVALID_HEIGHT_VALUE;
+    if (GridMap* gmap = const_cast<Map*>(this)->GetGrid(x, y))
+    {
+        float gridHeight = gmap->getHeight(x, y);
+        // look from a bit higher pos to find the floor, ignore under surface case
+        if (z + 2.0f > gridHeight)
+            mapHeight = gridHeight;
+    }
 
-    return std::max<float>(vmapZ, goZ);
+    float vmapHeight = VMAP_INVALID_HEIGHT_VALUE;
+    //if (checkVMap)
+    {
+        VMAP::IVMapManager* vmgr = VMAP::VMapFactory::createOrGetVMapManager();
+        //if (vmgr->isHeightCalcEnabled())
+            vmapHeight = vmgr->getHeight(GetId(), x, y, z + 2.0f, maxSearchDist);   // look from a bit higher pos to find the floor
+    }
+
+    // mapHeight set for any above raw ground Z or <= INVALID_HEIGHT
+    // vmapheight set for any under Z value or <= INVALID_HEIGHT
+    if (vmapHeight > INVALID_HEIGHT)
+    {
+        if (mapHeight > INVALID_HEIGHT)
+        {
+            // we have mapheight and vmapheight and must select more appropriate
+
+            // we are already under the surface or vmap height above map heigt
+            // or if the distance of the vmap height is less the land height distance
+            if (z < mapHeight || vmapHeight > mapHeight || fabs(mapHeight - z) > fabs(vmapHeight - z))
+                return vmapHeight;
+            else
+                return mapHeight;                           // better use .map surface height
+        }
+        else
+            return vmapHeight;                              // we have only vmapHeight (if have)
+    }
+
+    return vmapHeight;                               // explicitly use map data
 }
 
 bool Map::IsInWater(float x, float y, float pZ, LiquidData* data) const
