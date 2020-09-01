@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -23,7 +23,6 @@
 #include <iterator>
 #include <memory>
 #include <vector>
-#include <boost/iterator/reverse_iterator.hpp>
 
 #define CHECK_AND_DECLARE_FUNCTION_TYPE(name, publicKey, privateKey)                                        \
     static_assert(std::is_same<decltype(&publicKey), decltype(&privateKey)>::value,                         \
@@ -79,7 +78,9 @@ bool Trinity::Crypto::RSA::LoadFromFile(std::string const& fileName, KeyTag)
 template <typename KeyTag>
 bool Trinity::Crypto::RSA::LoadFromString(std::string const& keyPem, KeyTag)
 {
-    std::unique_ptr<BIO, BIODeleter> keyBIO(BIO_new_mem_buf(const_cast<char*>(keyPem.c_str()), keyPem.length() + 1));
+    std::unique_ptr<BIO, BIODeleter> keyBIO(BIO_new_mem_buf(
+        const_cast<char*>(keyPem.c_str()) /*api hack - this function assumes memory is readonly but lacks const modifier*/,
+        keyPem.length() + 1));
     if (!keyBIO)
         return false;
 
@@ -105,7 +106,7 @@ BigNumber Trinity::Crypto::RSA::GetModulus() const
 template <typename KeyTag>
 bool Trinity::Crypto::RSA::Encrypt(uint8 const* data, std::size_t dataLength, uint8* output, int32 paddingType)
 {
-    std::vector<uint8> inputData(boost::make_reverse_iterator(data + dataLength), boost::make_reverse_iterator(data));
+    std::vector<uint8> inputData(std::make_reverse_iterator(data + dataLength), std::make_reverse_iterator(data));
     int result = get_RSA_encrypt<KeyTag>()(inputData.size(), inputData.data(), output, _rsa, paddingType);
     std::reverse(output, output + GetOutputSize());
     return result != -1;
@@ -114,7 +115,7 @@ bool Trinity::Crypto::RSA::Encrypt(uint8 const* data, std::size_t dataLength, ui
 bool Trinity::Crypto::RSA::Sign(int32 hashType, uint8 const* dataHash, std::size_t dataHashLength, uint8* output)
 {
     uint32 signatureLength = 0;
-    auto result = RSA_sign(hashType, dataHash, dataHashLength, output, &signatureLength, _rsa);
+    int result = RSA_sign(hashType, dataHash, dataHashLength, output, &signatureLength, _rsa);
     std::reverse(output, output + GetOutputSize());
     return result != -1;
 }

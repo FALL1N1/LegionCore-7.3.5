@@ -27,7 +27,7 @@ UpdateData::UpdateData(uint16 map) : m_map(map), m_blockCount(0)
 {
 }
 
-void UpdateData::AddOutOfRangeGUID(GuidSet& guids)
+void UpdateData::AddOutOfRangeGUID(std::set<ObjectGuid> guids)
 {
     m_outOfRangeGUIDs.insert(guids.begin(), guids.end());
 }

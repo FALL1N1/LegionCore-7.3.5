@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2014 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
  * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -22,11 +22,16 @@
 #include <algorithm>
 #include <memory>
 
-BigNumber::BigNumber() : _bn(BN_new()) { }
+BigNumber::BigNumber()
+    : _bn(BN_new())
+{ }
 
-BigNumber::BigNumber(BigNumber const& bn) : _bn(BN_dup(bn._bn)) { }
+BigNumber::BigNumber(BigNumber const& bn)
+    : _bn(BN_dup(bn._bn))
+{ }
 
-BigNumber::BigNumber(uint32 val) : _bn(BN_new())
+BigNumber::BigNumber(uint32 val)
+    : _bn(BN_new())
 {
     BN_set_word(_bn, val);
 }
@@ -50,9 +55,9 @@ void BigNumber::SetQword(uint64 val)
 
 void BigNumber::SetBinary(uint8 const* bytes, int32 len)
 {
-    auto array = new uint8[len];
+    uint8* array = new uint8[len];
 
-    for (auto i = 0; i < len; i++)
+    for (int i = 0; i < len; i++)
         array[i] = bytes[len - 1 - i];
 
     BN_bin2bn(array, len, _bn);
@@ -85,41 +90,6 @@ BigNumber BigNumber::operator+=(BigNumber const& bn)
     return *this;
 }
 
-BigNumber BigNumber::operator+(BigNumber const& bn)
-{
-    BigNumber t(*this);
-    return t += bn;
-}
-
-BigNumber BigNumber::operator-(BigNumber const& bn)
-{
-    BigNumber t(*this);
-    return t -= bn;
-}
-
-BigNumber BigNumber::operator*(BigNumber const& bn)
-{
-    BigNumber t(*this);
-    return t *= bn;
-}
-
-BigNumber BigNumber::operator/(BigNumber const& bn)
-{
-    BigNumber t(*this);
-    return t /= bn;
-}
-
-BigNumber BigNumber::operator%(BigNumber const& bn)
-{
-    BigNumber t(*this);
-    return t %= bn;
-}
-
-bignum_st* BigNumber::BN()
-{
-    return _bn;
-}
-
 BigNumber BigNumber::operator-=(BigNumber const& bn)
 {
     BN_sub(_bn, _bn, bn._bn);
@@ -128,7 +98,9 @@ BigNumber BigNumber::operator-=(BigNumber const& bn)
 
 BigNumber BigNumber::operator*=(BigNumber const& bn)
 {
-    BN_CTX* bnctx = BN_CTX_new();
+    BN_CTX *bnctx;
+
+    bnctx = BN_CTX_new();
     BN_mul(_bn, _bn, bn._bn, bnctx);
     BN_CTX_free(bnctx);
 
@@ -137,7 +109,9 @@ BigNumber BigNumber::operator*=(BigNumber const& bn)
 
 BigNumber BigNumber::operator/=(BigNumber const& bn)
 {
-    BN_CTX* bnctx = BN_CTX_new();
+    BN_CTX *bnctx;
+
+    bnctx = BN_CTX_new();
     BN_div(_bn, NULL, _bn, bn._bn, bnctx);
     BN_CTX_free(bnctx);
 
@@ -146,7 +120,9 @@ BigNumber BigNumber::operator/=(BigNumber const& bn)
 
 BigNumber BigNumber::operator%=(BigNumber const& bn)
 {
-    BN_CTX* bnctx = BN_CTX_new();
+    BN_CTX *bnctx;
+
+    bnctx = BN_CTX_new();
     BN_mod(_bn, _bn, bn._bn, bnctx);
     BN_CTX_free(bnctx);
 
@@ -156,8 +132,9 @@ BigNumber BigNumber::operator%=(BigNumber const& bn)
 BigNumber BigNumber::Exp(BigNumber const& bn)
 {
     BigNumber ret;
+    BN_CTX *bnctx;
 
-    BN_CTX* bnctx = BN_CTX_new();
+    bnctx = BN_CTX_new();
     BN_exp(ret._bn, _bn, bn._bn, bnctx);
     BN_CTX_free(bnctx);
 
@@ -167,8 +144,9 @@ BigNumber BigNumber::Exp(BigNumber const& bn)
 BigNumber BigNumber::ModExp(BigNumber const& bn1, BigNumber const& bn2)
 {
     BigNumber ret;
+    BN_CTX *bnctx;
 
-    BN_CTX* bnctx = BN_CTX_new();
+    bnctx = BN_CTX_new();
     BN_mod_exp(ret._bn, _bn, bn1._bn, bn2._bn, bnctx);
     BN_CTX_free(bnctx);
 

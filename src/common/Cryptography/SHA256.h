@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+ * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -28,26 +27,26 @@ class BigNumber;
 
 class SHA256Hash
 {
-public:
-    typedef std::integral_constant<uint32, SHA256_DIGEST_LENGTH> DigestLength;
+    public:
+        typedef std::integral_constant<uint32, SHA256_DIGEST_LENGTH> DigestLength;
 
-    SHA256Hash();
-    ~SHA256Hash();
+        SHA256Hash();
+        ~SHA256Hash();
 
-    void UpdateBigNumbers(BigNumber* bn0, ...);
+        void UpdateBigNumbers(BigNumber* bn0, ...);
 
-    void UpdateData(uint8 const* data, size_t len);
-    void UpdateData(std::string const& str);
+        void UpdateData(uint8 const* data, size_t len);
+        void UpdateData(std::string const& str);
 
-    void Initialize();
-    void Finalize();
+        void Initialize();
+        void Finalize();
 
-    uint8* GetDigest();
-    uint32 GetLength() const;
+        uint8 *GetDigest() { return mDigest; }
+        uint32 GetLength() const { return SHA256_DIGEST_LENGTH; }
 
-private:
-    SHA256_CTX mC;
-    uint8 mDigest[SHA256_DIGEST_LENGTH];
+    private:
+        SHA256_CTX mC;
+        uint8 mDigest[SHA256_DIGEST_LENGTH];
 };
 
 #endif // SHA256_h__

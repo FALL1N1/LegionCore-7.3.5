@@ -57,7 +57,7 @@ class UpdateData
     public:
         UpdateData(uint16 map);
 
-        void AddOutOfRangeGUID(GuidSet& guids);
+        void AddOutOfRangeGUID(std::set<ObjectGuid> guids);
         void AddOutOfRangeGUID(ObjectGuid guid);
         void AddUpdateBlock(const ByteBuffer &block);
         bool BuildPacket(WorldPacket* packet);

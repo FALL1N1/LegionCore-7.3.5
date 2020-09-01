@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
  * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -46,9 +46,10 @@ void SHA1Hash::UpdateData(const std::string &str)
 void SHA1Hash::UpdateBigNumbers(BigNumber* bn0, ...)
 {
     va_list v;
+    BigNumber* bn;
 
     va_start(v, bn0);
-    auto bn = bn0;
+    bn = bn0;
     while (bn)
     {
         UpdateData(bn->AsByteArray().get(), bn->GetNumBytes());

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -30,9 +30,6 @@ namespace Crypto
 class RSA
 {
 public:
-    RSA(RSA const& rsa) = delete;
-    RSA& operator=(RSA const& rsa) = delete;
-
     struct PublicKey {};
     struct PrivateKey {};
 
@@ -71,6 +68,9 @@ private:
     bool Encrypt(uint8 const* data, std::size_t dataLength, uint8* output, int32 paddingType);
 
     bool Sign(int32 hashType, uint8 const* dataHash, std::size_t dataHashLength, uint8* output);
+
+    RSA(RSA const& rsa) = delete;
+    RSA& operator=(RSA const& rsa) = delete;
 
     ::RSA* _rsa;
 };

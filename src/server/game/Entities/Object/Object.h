@@ -23,6 +23,7 @@
 #include "UpdateFields.h"
 #include "UpdateData.h"
 #include "ObjectDefines.h"
+#include "ObjectGuid.h"
 #include "GridDefines.h"
 #include "Map.h"
 #include "MovementInfo.h"

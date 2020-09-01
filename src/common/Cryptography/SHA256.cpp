@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+ * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -19,7 +18,7 @@
 #include "SHA256.h"
 #include "BigNumber.h"
 #include <cstring>
-#include <cstdarg>
+#include <stdarg.h>
 
 SHA256Hash::SHA256Hash()
 {
@@ -45,9 +44,10 @@ void SHA256Hash::UpdateData(const std::string &str)
 void SHA256Hash::UpdateBigNumbers(BigNumber* bn0, ...)
 {
     va_list v;
+    BigNumber* bn;
 
     va_start(v, bn0);
-    auto bn = bn0;
+    bn = bn0;
     while (bn)
     {
         UpdateData(bn->AsByteArray().get(), bn->GetNumBytes());
@@ -64,14 +64,4 @@ void SHA256Hash::Initialize()
 void SHA256Hash::Finalize(void)
 {
     SHA256_Final(mDigest, &mC);
-}
-
-uint8* SHA256Hash::GetDigest()
-{
-    return mDigest;
-}
-
-uint32 SHA256Hash::GetLength() const
-{
-    return SHA256_DIGEST_LENGTH;
 }
